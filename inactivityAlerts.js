@@ -1,5 +1,5 @@
 const CONFIG_KEY = "inactivityAlerts";
-module.exports = async function ({ bot, threads, config }) {
+module.exports = async function ({ bot, threads, config, commands }) {
   const {
     lowThreshold = 12 * 60 * 60 * 1000, // 12 hours default
     highThreshold = 24 * 60 * 60 * 1000, // 24 hours default
@@ -17,6 +17,38 @@ module.exports = async function ({ bot, threads, config }) {
     highThresholdCategories,
     ignoredCategories,
     ignoreClosingThreads,
+  );
+  commands.addInboxThreadCommand(
+    "ignoreInactivity",
+    [],
+    async (_msg, _args, thread) => {
+      if (thread.getMetadataValue("ignoreInactivityAlerts")) {
+        thread.postSystemMessage(
+          `This thread is already set to be ignored for inactivity alerts.`,
+        );
+        return;
+      }
+      thread.setMetadataValue("ignoreInactivityAlerts", true);
+      thread.postSystemMessage(
+        `This thread will now be ignored for inactivity alerts.`,
+      );
+    },
+  );
+  commands.addInboxThreadCommand(
+    "unignoreInactivity",
+    [],
+    async (_msg, _args, thread) => {
+      if (!thread.getMetadataValue("ignoreInactivityAlerts")) {
+        thread.postSystemMessage(
+          `This thread is not set to be ignored for inactivity alerts.`,
+        );
+        return;
+      }
+      thread.setMetadataValue("ignoreInactivityAlerts", false);
+      thread.postSystemMessage(
+        `This thread will no longer be ignored for inactivity alerts.`,
+      );
+    },
   );
   setInterval(
     () => {
@@ -93,6 +125,12 @@ async function checkInactiveThreads(
     const latestMessage = await thread.getLatestThreadMessage();
 
     if (!latestMessage || !latestMessage.created_at) {
+      continue;
+    }
+
+    // Check if thread is set to ignore inactivity alerts
+    const ignoreAlerts = thread.getMetadataValue("ignoreInactivityAlerts");
+    if (ignoreAlerts) {
       continue;
     }
 
