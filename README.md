@@ -50,6 +50,18 @@ inactivityAlerts.ignoreClosingThreads = true
 
 All categories not in highThresholdCategories will be considered low threshold categories, there's no configuration option for low threshold categories.
 
+### Commands
+
+#### Ignoring a channel
+
+`!ignoreInactivity`
+This will ignore the inactivity check in the current thread
+
+#### Unignoring a channel
+
+`!unignoreInactivity`
+This will stop ignoring the inactivity check in the current thread
+
 ### Bugs
 
 If you have found a bug, please report it at the [issues page for the plugin](https://github.com/hawkeye7662/InactivityAlerts/issues)!  
