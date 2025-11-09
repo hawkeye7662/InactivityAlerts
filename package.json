@@ -1,0 +1,30 @@
+{
+  "name": "inactivityalerts",
+  "version": "1.0.0",
+  "description": "A plugin for Discord Modmail by Dragory that sends a message in threads that are inactive",
+  "main": "inactivityAlerts.js",
+  "scripts": {
+    "lint": "eslint --fix ./inactivityAlerts.js",
+    "format": "prettier --write ./inactivityAlerts.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hawkeye7662/InactivityAlerts.git"
+  },
+  "keywords": [
+    "modmail",
+    "plugin"
+  ],
+  "author": "Hawk Eye",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hawkeye7662/InactivityAlerts/issues"
+  },
+  "homepage": "https://github.com/hawkeye7662/InactivityAlerts#readme",
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "3.6.2"
+  }
+}
