@@ -35,6 +35,7 @@ The default configuration is as follows:
 |Low Threshold|12 hours|
 |High Threshold| 24 hours|
 |Ignore Closing Threads| true|
+|Bumping Multiplier| 0.5|
 
 You can change the default mappings in your `config.ini` file, under the `inactivityAlerts` configuration.
 An example `config.ini` setup may look like this:
@@ -46,6 +47,7 @@ inactivityAlerts.highThresholdCategories[] = 1191320772266954752
 inactivityAlerts.highThresholdCategories[] = 713392854885728280
 inactivityAlerts.ignoredCategories[] = 1203917358687719474
 inactivityAlerts.ignoreClosingThreads = true
+inactivityAlerts.bumpingMultiplier = 1
 ```
 
 All categories not in highThresholdCategories will be considered low threshold categories, there's no configuration option for low threshold categories.
