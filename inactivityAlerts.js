@@ -6,6 +6,7 @@ module.exports = async function ({ bot, threads, config, commands }) {
     highThresholdCategories = [],
     ignoredCategories = [],
     ignoreClosingThreads = true,
+    bumpMultiplier = 0.5, // get bumps every half threshold period
   } = config[CONFIG_KEY] || {};
 
   // 5 minute cron job
@@ -17,6 +18,7 @@ module.exports = async function ({ bot, threads, config, commands }) {
     highThresholdCategories,
     ignoredCategories,
     ignoreClosingThreads,
+    bumpMultiplier
   );
   commands.addInboxThreadCommand(
     "ignoreInactivity",
@@ -108,6 +110,7 @@ async function checkInactiveThreads(
   highThresholdCategories,
   ignoredCategories,
   ignoreClosingThreads,
+  bumpMultiplier,
 ) {
   const openThreads = await threads.getAllOpenThreads();
 
@@ -151,7 +154,7 @@ async function checkInactiveThreads(
       : Infinity; // If never bumped, treat as infinite time
 
     // Check if thread exceeds the applicable threshold
-    if (difference > threshold && timeSinceLastBump > threshold) {
+    if (difference > threshold && timeSinceLastBump > threshold * bumpMultiplier) {
       const durationString = formatDuration(difference);
       thread.postNonLogMessage(
         `This thread has been inactive for more than ${durationString}.`,
