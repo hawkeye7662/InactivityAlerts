@@ -151,8 +151,8 @@ async function checkInactiveThreads(
       : Infinity; // If never bumped, treat as infinite time
 
     // Check if thread exceeds the applicable threshold
-    if (difference > threshold && timeSinceLastBump > threshold / 2) {
-      const durationString = formatDuration(threshold);
+    if (difference > threshold && timeSinceLastBump > threshold) {
+      const durationString = formatDuration(difference);
       thread.postNonLogMessage(
         `This thread has been inactive for more than ${durationString}.`,
       );
