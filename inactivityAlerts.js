@@ -62,6 +62,7 @@ module.exports = async function ({ bot, threads, config, commands }) {
         highThresholdCategories,
         ignoredCategories,
         ignoreClosingThreads,
+        bumpMultiplier
       );
     },
     5 * 60 * 1000,
