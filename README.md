@@ -36,6 +36,8 @@ The default configuration is as follows:
 |High Threshold| 24 hours|
 |Ignore Closing Threads| true|
 |Bumping Multiplier| 0.5|
+|Round Duration| true|
+|Round To Unit| 30min|
 
 You can change the default mappings in your `config.ini` file, under the `inactivityAlerts` configuration.
 An example `config.ini` setup may look like this:
@@ -48,9 +50,20 @@ inactivityAlerts.highThresholdCategories[] = 713392854885728280
 inactivityAlerts.ignoredCategories[] = 1203917358687719474
 inactivityAlerts.ignoreClosingThreads = true
 inactivityAlerts.bumpMultiplier = 1
+inactivityAlerts.roundDuration = true
+inactivityAlerts.roundToUnit = "30min"
 ```
 
 All categories not in highThresholdCategories will be considered low threshold categories, there's no configuration option for low threshold categories.
+
+#### Duration Rounding
+
+The `roundDuration` option (default `true`) rounds the inactivity duration to the nearest interval for cleaner messaging. When enabled:
+
+- Durations are rounded to the nearest 30 minutes (or hour if `roundToUnit` is set to `"hour"`)
+- If a duration is within 10 minutes of the next interval, it rounds up; otherwise it rounds down
+- Set `roundDuration = false` to disable rounding and show exact durations
+- Set `roundToUnit = "hour"` to round to the nearest hour instead of 30 minutes
 
 ### Commands
 

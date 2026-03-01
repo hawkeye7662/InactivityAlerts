@@ -7,6 +7,8 @@ module.exports = async function ({ bot, threads, config, commands }) {
     ignoredCategories = [],
     ignoreClosingThreads = true,
     bumpMultiplier = 0.5, // get bumps every half threshold period
+    roundDuration = true, // round to nearest hour/30min by default
+    roundToUnit = "30min", // "30min" or "hour"
   } = config[CONFIG_KEY] || {};
 
   // 5 minute cron job
@@ -18,7 +20,9 @@ module.exports = async function ({ bot, threads, config, commands }) {
     highThresholdCategories,
     ignoredCategories,
     ignoreClosingThreads,
-    bumpMultiplier
+    bumpMultiplier,
+    roundDuration,
+    roundToUnit,
   );
   commands.addInboxThreadCommand(
     "ignoreInactivity",
@@ -62,14 +66,36 @@ module.exports = async function ({ bot, threads, config, commands }) {
         highThresholdCategories,
         ignoredCategories,
         ignoreClosingThreads,
-        bumpMultiplier
+        bumpMultiplier,
+        roundDuration,
+        roundToUnit,
       );
     },
     5 * 60 * 1000,
   );
 };
 
-function formatDuration(milliseconds) {
+function roundDurationMs(milliseconds, unit = "30min") {
+  const roundInterval = unit === "hour" ? 60 * 60 * 1000 : 30 * 60 * 1000;
+  const tenMinutesMs = 10 * 60 * 1000;
+
+  // Calculate remainder
+  const remainder = milliseconds % roundInterval;
+
+  // If within 10 minutes of next interval, round up; otherwise round down
+  if (remainder > roundInterval - tenMinutesMs) {
+    return milliseconds + (roundInterval - remainder);
+  }
+
+  return milliseconds - remainder;
+}
+
+function formatDuration(milliseconds, shouldRound = true, roundUnit = "30min") {
+  // Apply rounding if enabled
+  if (shouldRound) {
+    milliseconds = roundDurationMs(milliseconds, roundUnit);
+  }
+
   const seconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -112,6 +138,8 @@ async function checkInactiveThreads(
   ignoredCategories,
   ignoreClosingThreads,
   bumpMultiplier,
+  roundDuration = true,
+  roundToUnit = "30min",
 ) {
   const openThreads = await threads.getAllOpenThreads();
 
@@ -155,8 +183,15 @@ async function checkInactiveThreads(
       : Infinity; // If never bumped, treat as infinite time
 
     // Check if thread exceeds the applicable threshold
-    if (difference > threshold && timeSinceLastBump > threshold * bumpMultiplier) {
-      const durationString = formatDuration(difference);
+    if (
+      difference > threshold &&
+      timeSinceLastBump > threshold * bumpMultiplier
+    ) {
+      const durationString = formatDuration(
+        difference,
+        roundDuration,
+        roundToUnit,
+      );
       thread.postNonLogMessage(
         `This thread has been inactive for more than ${durationString}.`,
       );
